@@ -77,10 +77,10 @@ const SKIP_URL_DOMAINS = [
 async function fetchSources(page: Page, searchQuery: string): Promise<Source[]> {
   const sources: Source[] = []
 
-  // Navigate to Bing — catch timeouts so one slow query doesn't crash the run
+  // Bing News — returns real articles, not dictionary/Wikipedia/car-rental pages
   try {
     await page.goto(
-      `https://www.bing.com/search?q=${encodeURIComponent(searchQuery)}`,
+      `https://www.bing.com/news/search?q=${encodeURIComponent(searchQuery)}`,
       { waitUntil: "domcontentloaded", timeout: 20_000 },
     )
   } catch {
@@ -88,15 +88,15 @@ async function fetchSources(page: Page, searchQuery: string): Promise<Source[]> 
   }
 
   const links: { href: string; title: string }[] = await page.$$eval(
-    ".b_algo h2 a",
+    "a.title",
     (els) =>
-      (els as HTMLAnchorElement[]).slice(0, 6).map((a) => ({
-        href: a.href,
-        title: a.textContent?.trim() ?? "",
-      })),
+      (els as HTMLAnchorElement[])
+        .slice(0, 6)
+        .map((a) => ({ href: a.href, title: a.textContent?.trim() ?? "" }))
+        .filter((l) => l.href && !l.href.includes("bing.com")),
   )
 
-  // Skip generic educational pages — filter by title since Bing uses redirect URLs
+  // Secondary title filter as a safety net
   const relevant = links.filter(({ title }) => !SKIP_TITLE_RE.test(title.trim()))
 
   for (const { href, title } of relevant) {
