@@ -33,6 +33,12 @@ past. Copy one into your project and change the parts you care about.
 | --- | --- | --- |
 | [desktop-computer-use-py](examples/desktop-computer-use-py) | Python | Screenshot, click, and type on a Linux GUI |
 
+### AI Agents
+
+| Example | Language | What it shows |
+| --- | --- | --- |
+| [ai-research-agent-ts](examples/ai-research-agent-ts) | TypeScript | Autonomous research agent — Claude plans searches, Solari browses, Claude synthesises a report |
+
 ## Running an example
 
 Each directory is self-contained.
